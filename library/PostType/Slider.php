@@ -84,6 +84,8 @@
                 </table>
                 <p><a href="<?php echo esc_url (admin_url ('post-new.php?post_type=fusesliderslide&slider='.$post->ID)); ?>" class="button button-primary"><?php _e ('Add a New Slide', 'fuse'); ?></a></p>
             <?php
+            
+            self::getSlides ($post->ID);
         } // slidesMeta ()
         
         
@@ -115,5 +117,53 @@
                     break;
             } // switch ()
         } // adminListValues ()
+        
+        
+        
+        
+        /**
+         *  Get the active slides for the given slider.
+         *
+         *  @param int $slider_id The ID of the slider.
+         *
+         *  @return array Returns an array of slide post objects.
+         */
+        static public function getSlides ($slider_id) {
+            global $wpdb;
+            
+            $now = current_time ('mysql');
+            
+            $query = $wpdb->prepare ("SELECT
+                s.ID AS ID
+            FROM ".$wpdb->posts." AS s
+            INNER JOIN ".$wpdb->postmeta." AS start_meta
+                ON start_meta.post_id = s.ID
+                AND start_meta.meta_key = 'fuse_sliders_slide_date_start'
+                AND (
+                    start_meta.meta_value = ''
+                    OR
+                    start_meta.meta_value <= %s
+                )
+            INNER JOIN ".$wpdb->postmeta." AS end_meta
+                ON end_meta.post_id = s.ID
+                AND end_meta.meta_key = 'fuse_sliders_slide_date_end'
+                AND (
+                    end_meta.meta_value = ''
+                    OR
+                    end_meta.meta_value >= %s
+                )
+            WHERE s.post_type = 'fusesliderslide'
+                AND s.post_status = 'publish'
+                AND s.post_date <= %s
+                AND s.post_parent = %d", $now, $now, $now, $slider_id);
+            
+            $slides = array ();
+            
+            foreach ($wpdb->get_results ($query) as $row) {
+                $slides [] = get_post ($row->ID);
+            } // foreach ()
+            
+            return $slides;
+        } // getSlides ()
         
     } // class Slider
