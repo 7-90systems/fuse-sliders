@@ -33,6 +33,7 @@
                 'supports' => array (
                     'title',
                     'editor',
+                    'thumbnail',
                     'page-attributes'
                 )
             ));

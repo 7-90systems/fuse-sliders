@@ -84,8 +84,6 @@
                 </table>
                 <p><a href="<?php echo esc_url (admin_url ('post-new.php?post_type=fusesliderslide&slider='.$post->ID)); ?>" class="button button-primary"><?php _e ('Add a New Slide', 'fuse'); ?></a></p>
             <?php
-            
-            self::getSlides ($post->ID);
         } // slidesMeta ()
         
         
