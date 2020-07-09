@@ -71,8 +71,50 @@
                             <?php foreach ($slides as $slide): ?>
                                 <tr>
                                     <td><a href="<?php echo esc_url (admin_url ('post.php?post='.$slide->ID.'&action=edit')); ?>"><?php echo $slide->post_title; ?></a></td>
-                                    <td><?php _e ('Starts At', 'fuse'); ?></td>
-                                    <td><?php _e ('Ends At', 'fuse'); ?></td>
+                                    <td>
+                                        <?php
+                                            $date = get_post_meta ($slide->ID, 'fuse_sliders_slide_date_start', true);
+                        
+                                            if (strlen ($date) > 0) {
+                                                $date = new \DateTime ($date);
+                                                $current = new \DateTime (current_time ('mysql'));
+                                                
+                                                if ($date < $current) {
+                                                    $class = 'admin-green admin';
+                                                } // if ()
+                                                else {
+                                                    $class = 'admin-red';
+                                                } // else
+                                                
+                                                echo '<span class="'.$class.' admin-bold">'.$date->format ('g:ia jS F Y').'</span>';
+                                            } // if ()
+                                            else {
+                                                echo '<span class="admin-italic">'.__ ('No start date', 'fuse').'</span>';
+                                            } // else
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $date = get_post_meta ($slide->ID, 'fuse_sliders_slide_date_end', true);
+                        
+                                            if (strlen ($date) > 0) {
+                                                $date = new \DateTime ($date);
+                                                $current = new \DateTime (current_time ('mysql'));
+                                                
+                                                if ($date > $current) {
+                                                    $class = 'admin-green admin';
+                                                } // if ()
+                                                else {
+                                                    $class = 'admin-red';
+                                                } // else
+                                                
+                                                echo '<span class="'.$class.' admin-bold">'.$date->format ('g:ia jS F Y').'</span>';
+                                            } // if ()
+                                            else {
+                                                echo '<span class="admin-italic">'.__ ('No end date', 'fuse').'</span>';
+                                            } // else
+                                        ?>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
